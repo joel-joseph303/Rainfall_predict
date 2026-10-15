@@ -1,0 +1,5 @@
+model,CV_RMSE,MAE,MSE,RMSE,R2,parameters
+Extra Trees,0.8466540676677216,0.3405923733693379,0.37207507754049157,0.6099795714124299,0.802854111312707,"{'n_estimators': 700, 'min_samples_split': 5, 'min_samples_leaf': 2, 'max_features': 1.0, 'max_depth': None}"
+Gradient Boosting,0.8340736306674892,0.3389962100224492,0.3956271254221005,0.628988970827073,0.7903749379138378,"{'subsample': 1.0, 'n_estimators': 200, 'min_samples_split': 3, 'min_samples_leaf': 3, 'max_depth': 4, 'learning_rate': 0.03}"
+Random Forest,0.8597560634591559,0.35013991288719487,0.4076648124845719,0.6384863447910002,0.7839967076669807,"{'n_estimators': 900, 'min_samples_split': 8, 'min_samples_leaf': 2, 'max_features': 0.7, 'max_depth': 20}"
+Hist Gradient Boosting,0.8683594049973297,0.362236768903585,0.43623249597082886,0.6604789898027256,0.7688599740113315,"{'min_samples_leaf': 15, 'max_leaf_nodes': 15, 'max_iter': 200, 'max_depth': 15, 'learning_rate': 0.08, 'l2_regularization': 0.01}"

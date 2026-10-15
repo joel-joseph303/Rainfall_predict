@@ -1,0 +1,3 @@
+model_type,model,features,validation_start,validation_end,samples,accuracy,precision,recall,f1,roc_auc,MAE,MSE,RMSE,R2,threshold,TN,FP,FN,TP
+Classification,LogisticRegression,55,2025-01-01,2025-12-30,364,0.9395604395604396,0.9222222222222223,0.8469387755102041,0.8829787234042553,0.9751035752646924,,,,,0.67,259.0,7.0,15.0,83.0
+Regression,ExtraTreesRegressor,55,2025-01-01,2025-12-30,364,,,,,,0.39351895248859964,0.3893656007343609,0.6239916671994594,0.7936926388930643,,,,,

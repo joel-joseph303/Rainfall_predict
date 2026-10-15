@@ -1,0 +1,559 @@
+Kerala Rainfall Prediction System
+
+55-Feature Production Forecast Version
+
+A machine-learning based rainfall prediction system designed to predict
+next-day and upcoming rainfall conditions for Kerala using historical
+weather data, engineered weather features, and ECMWF forecast data from
+Open-Meteo.
+
+The system uses two machine-learning models:
+
+1. Logistic Regression - Rain / No Rain Classification
+2. Extra Trees Regressor - Rainfall Amount Prediction
+
+The production system uses 55 engineered weather features.
+
+---
+
+Project Overview
+
+The system performs two prediction tasks:
+
+### 1. Rainfall Classification
+
+Predicts whether rainfall is expected.
+
+Output:
+
+- RAIN
+- NO RAIN
+- Rain probability
+- Classification threshold
+
+The optimized classification model uses a threshold of:
+
+0.67
+
+2. Rainfall Regression
+
+Predicts the expected rainfall amount in millimetres (mm).
+
+Output:
+
+- Predicted rainfall in mm
+- Planning risk level
+
+---
+
+Machine Learning Models
+
+Classification
+
+Model:
+
+Logistic Regression
+
+Selected configuration:
+
+- C = 0.01
+- class_weight = balanced
+- solver = liblinear
+- max_iter = 5000
+- Classification threshold = 0.67
+
+Validation performance:
+
+- Accuracy: 0.9396
+- Precision: 0.9222
+- Recall: 0.8469
+- F1-score: 0.8830
+- ROC-AUC: 0.9751
+
+Confusion Matrix:
+
+- True Negative: 259
+- False Positive: 7
+- False Negative: 15
+- True Positive: 83
+
+---
+
+Regression
+
+Selected model:
+
+Extra Trees Regressor
+
+Configuration:
+
+- n_estimators = 700
+- min_samples_split = 5
+- min_samples_leaf = 2
+- max_features = 1.0
+- max_depth = None
+
+Validation performance:
+
+- MAE: 0.3406 mm
+- MSE: 0.3721
+- RMSE: 0.6100 mm
+- R²: 0.8029
+
+The model was selected using time-series validation.
+
+---
+
+Features
+
+The production system uses 55 engineered features.
+
+### Basic Weather Features
+
+- temperature
+- dew_point
+- pressure
+- u10
+- v10
+- wind_speed
+
+Rainfall Lag Features
+
+- rain_lag_1
+- rain_lag_2
+- rain_lag_3
+- rain_lag_4
+- rain_lag_5
+- rain_lag_6
+- rain_lag_7
+- rain_lag_14
+
+Rainfall Rolling Features
+
+- rain_3day
+- rain_7day
+- rain_14day
+- rain_mean_3day
+- rain_mean_7day
+- rain_mean_14day
+- rain_std_7day
+- rain_std_14day
+
+Rainfall Change Features
+
+- rain_change_1
+- rain_change_3
+- rain_change_7
+
+Temperature Features
+
+- temperature_change_1
+- temperature_change_3
+- temperature_change_7
+
+Dew Point Features
+
+- dewpoint_change_1
+- dewpoint_change_3
+- dewpoint_change_7
+- dewpoint_depression
+
+Pressure Features
+
+- pressure_change_1
+- pressure_change_3
+- pressure_change_7
+- pressure_mean_3day
+- pressure_mean_7day
+
+Wind Features
+
+- wind_change_1
+- wind_change_3
+- wind_change_7
+- wind_mean_3day
+- wind_mean_7day
+- calculated_wind_speed
+- wind_direction_sin
+- wind_direction_cos
+
+Derived Weather Features
+
+- temperature_dewpoint_ratio
+
+
+Calendar Features
+
+- month
+- day_of_year
+- day_of_week
+- month_sin
+- month_cos
+- day_of_year_sin
+- day_of_year_cos
+- day_of_week_sin
+- day_of_week_cos
+
+---
+
+Data Sources
+
+Historical Training Data
+
+The historical training dataset was created using ERA5 weather data.
+
+The original historical period used for model development begins in
+2020.
+
+The processed dataset is stored as:
+
+processed/daily_weather.csv
+
+---
+
+Forecast Data
+
+Production predictions use Open-Meteo forecast data.
+
+Forecast model:
+
+ECMWF IFS 0.25°
+
+Model identifier:
+
+ecmwf_ifs025
+
+The representative forecast location used by the system is:
+
+Latitude: 10.0
+Longitude: 76.125
+
+Time zone:
+
+Asia/Kolkata
+
+The location represents the Kerala study area and is not intended to
+represent a specific weather station.
+
+---
+
+Production Forecast
+
+The production forecast script is:
+
+Code/future_weather_55.py
+
+It:
+
+1. Loads the trained classification model.
+2. Loads the trained regression model.
+3. Loads the saved feature lists.
+4. Loads the saved classification threshold.
+5. Reads historical rainfall/weather data.
+6. Retrieves recent model-based weather history from Open-Meteo.
+7. Retrieves ECMWF forecast data.
+8. Generates the required 55 features.
+9. Validates the feature order.
+10. Performs rainfall classification.
+11. Predicts rainfall amount.
+12. Produces a planning risk level.
+
+The script does not modify the trained model files.
+
+It also does not overwrite the historical CSV during normal forecasting.
+
+---
+
+Streamlit Dashboard
+
+The interactive dashboard is:
+
+Code/dash.py
+
+The dashboard allows the user to select a forecast date within the
+available forecast period and displays:
+
+- Rain probability
+- Predicted rainfall
+- Rain / No Rain prediction
+- Planning risk
+- Weather information
+- Model prediction information
+
+---
+
+Planning Risk
+
+The production system uses the following planning-risk categories:
+
+HIGH
+
+Risk is HIGH when:
+
+- Rain probability >= 80%
+
+OR
+
+- Predicted rainfall >= 5 mm
+
+MEDIUM
+
+Risk is MEDIUM when:
+
+- Rain probability >= 50%
+
+OR
+
+- Predicted rainfall >= 1 mm
+
+LOW
+
+Otherwise the risk is LOW.
+
+---
+
+## Project Structure
+
+Recommended project structure:
+
+rainfall_prediction/
+
+├── Code/
+│   ├── dash.py
+│   ├── future_weather_55.py
+│   ├── feature.py
+│   ├── final_training.py
+│   ├── process_era5.py
+│   ├── evaluation_55mat.py
+│   ├── true_forecast_backtest_2025.py
+│   └── finial_regression.py
+│
+├── processed/
+│   ├── daily_weather.csv
+│   │
+│   └── models/
+│       ├── best_optimized_logistic_regression.joblib
+│       ├── optimized_classification_features.joblib
+│       ├── optimized_classification_threshold.txt
+│       ├── best_optimized_regression_model.joblib
+│       └── optimized_regression_features.joblib
+│
+├── results/
+│
+├── requirements.txt
+└── README.md
+
+---
+
+Installation
+
+1. Clone the repository
+
+Open a terminal and run:
+
+git clone YOUR_GITHUB_REPOSITORY_URL
+
+Then enter the project directory:
+
+cd rainfall_prediction
+
+---
+
+2. Create a virtual environment
+
+Windows:
+
+python -m venv venv
+
+Activate it:
+
+venv\Scripts\activate
+
+---
+
+3. Install dependencies
+
+pip install -r requirements.txt
+
+---
+
+Running the Production Forecast
+
+From the project root:
+
+python Code/future_weather_55.py
+
+The program will retrieve the required forecast data from Open-Meteo
+and generate the rainfall prediction.
+
+---
+
+Running the Dashboard
+
+From the project root:
+
+streamlit run Code/dash.py
+
+A local Streamlit web application will open in the browser.
+
+---
+
+Important Path Configuration
+
+The project is designed to use relative paths instead of personal
+Windows paths.
+
+For example, the code should use:
+
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+This allows the project to work on different computers.
+
+For example, the project can be placed at:
+
+C:\NEEDED\rainfall_prediction
+
+or:
+
+D:\Projects\rainfall_prediction
+
+without changing the model/data paths.
+
+---
+
+Important Files
+
+daily_weather.csv
+
+Contains the processed daily weather/rainfall data used by the
+production feature-generation pipeline.
+
+Classification model
+
+best_optimized_logistic_regression.joblib
+
+Used to predict RAIN / NO RAIN.
+
+Regression model
+
+best_optimized_regression_model.joblib
+
+Used to predict rainfall amount in millimetres.
+
+Classification features
+
+optimized_classification_features.joblib
+
+Contains the exact feature names and order expected by the
+classification model.
+
+Regression features
+
+optimized_regression_features.joblib
+
+Contains the exact feature names and order expected by the regression
+model.
+
+Classification threshold
+
+optimized_classification_threshold.txt
+
+Contains the optimized classification probability threshold.
+
+---
+
+Forecast Backtesting
+
+A true 24-hour forecast backtest was performed for 2025 using the
+Open-Meteo Previous Runs API and ECMWF IFS 0.25° archived forecast data.
+
+The backtest used:
+
+- Forecast lead time: 24 hours
+- Forecast model: ECMWF IFS 0.25°
+- Period: 2025
+- Rainfall threshold: 1.0 mm
+- Representative location: 10.0° N, 76.125° E
+
+True forecast backtest results:
+
+Classification
+
+- Accuracy: 0.8407
+- Precision: 0.6515
+- Recall: 0.8776
+- F1-score: 0.7478
+- ROC-AUC: 0.9272
+
+Regression
+
+- MAE: 0.7529 mm
+- MSE: 0.9974
+- RMSE: 0.9987 mm
+- R²: 0.4715
+
+These results represent true archived 24-hour forecast performance.
+
+The model-development validation results reported earlier in this
+README are separate from the true forecast backtest and should not be
+interpreted as real-world forecast performance.
+
+---
+
+Rainfall Classification Threshold
+
+The rainfall class is based on a rainfall threshold of:
+
+1.0 mm
+
+Therefore:
+
+Rainfall >= 1.0 mm → RAIN
+
+Rainfall < 1.0 mm → NO RAIN
+
+The production Logistic Regression probability threshold is:
+
+0.67
+
+---
+
+Notes
+
+- Forecast values are obtained from Open-Meteo.
+- The production forecast uses ECMWF IFS 0.25°.
+- The representative coordinate is used for the Kerala study area.
+- Recent model-based weather history is used to construct lag and
+  rolling features required by the 55-feature model.
+- The production system does not overwrite trained model files.
+- The production system does not overwrite daily_weather.csv during
+  normal forecasting.
+- Internet access is required when running the production forecast or
+  Streamlit dashboard because forecast data is retrieved from
+  Open-Meteo.
+
+---
+
+Limitations
+
+The system should be considered a machine-learning forecasting
+prototype rather than an official meteorological forecasting service.
+
+Rainfall is highly variable in space and time, particularly during
+Kerala's monsoon seasons.
+
+The model uses a representative coordinate rather than a dense
+station-specific forecast.
+
+Forecast performance can vary depending on weather conditions,
+forecast-model errors, and changes in rainfall patterns.
+
+---
+
+Author
+
+Kerala Rainfall Prediction System
+
+55-Feature Machine Learning Production Forecast
